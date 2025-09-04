@@ -1,0 +1,47 @@
+----Activity 10
+
+---to find all the orders issued against the salesman who may works for customer whose id is 3007.
+SELECT * 
+FROM orders
+WHERE salesman_id =(
+    SELECT salesman_id 
+    FROM orders 
+    WHERE customer_id = 3007
+);
+
+----to find all orders attributed to a salesman in New York.
+SELECT * 
+FROM orders
+WHERE salesman_id = (
+    SELECT salesman_id 
+    FROM salesman
+    WHERE salesman_city = 'New York'
+);
+
+----to count the customers with grades above New York's average.
+SELECT COUNT(*) 
+FROM customers
+GROUP BY grade
+HAVING grade > (
+    SELECT avg(grade)
+    FROM customers
+    WHERE city = 'New York'
+);
+
+----to extract the data from the orders table for those salesman who earned the maximum commission
+SELECT order_no, purchase_amount, order_date, salesman_id
+FROM orders
+WHERE salesman_id IN( SELECT salesman_id FROM salesman
+WHERE commission=( SELECT MAX(commission) FROM salesman));
+
+Activity 11
+---Write a query that produces the name and number of each salesman and each customer with more than one current order. Put the results in alphabetical order.
+SELECT customer_id, customer_name FROM customers c
+WHERE 1<(SELECT COUNT(*) FROM orders o WHERE c.customer_id = o.customer_id)
+UNION
+SELECT salesman_id, salesman_name FROM salesman s
+WHERE 1<(SELECT COUNT(*) FROM orders o WHERE s.salesman_id = o.salesman_id)
+ORDER BY customer_name;
+
+----to make a report of which salesman produce the largest and smallest orders on each date.
+
